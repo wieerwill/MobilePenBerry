@@ -66,7 +66,7 @@ Hint: code snippets which are in `<...>` should be replaced by own variables
     - [ ] bluesnarfer
     - [ ] btscanner
     - [ ] traceroute
-    - [ ] whois
+    - [x] whois
   - Sniffing/Pawning
     - [x] [Bettercap](tools/bettercap.md)
     - [x] [Kismet](tools/kismet.md)
