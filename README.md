@@ -73,7 +73,7 @@ Hint: code snippets which are in `<...>` should be replaced by own variables
     - [x] [Pwnagotchi](tools/pwnagotchi.md) 
     - [ ] Pwncat
     - [ ] RouterSploit
-    - [ ] wifi-honey
+    - [x] wifi-honey
   - Hashing/Cracking
     - [x] [Hashcat](tools/hashcat.md)
     - [ ] Sipcrack
