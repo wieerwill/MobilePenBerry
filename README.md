@@ -80,11 +80,11 @@ Hint: code snippets which are in `<...>` should be replaced by own variables
     - [x] [coWPAtty](tools/cowpatty.md)
     - [ ] John the Ripper
   - MITM
-    - [ ] [Wifipisher](tools/wifipisher.md)
+    - [x] [Wifipisher](tools/wifipisher.md)
     - [ ] sslsniff
     - [ ] dnscat2
     - [ ] websploit
-    - [ ] [XeroSploit](tools/xerosploit.md)
+    - [x] [XeroSploit](tools/xerosploit.md)
   - other
     - [ ] Godoh
     - [ ] Macchanger
