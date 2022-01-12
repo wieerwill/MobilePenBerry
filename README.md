@@ -69,7 +69,7 @@ Hint: code snippets which are in `<...>` should be replaced by own variables
     - [ ] whois
   - Sniffing/Pawning
     - [x] [Bettercap](tools/bettercap.md)
-    - [ ] [Kismet](tools/kismet.md)
+    - [x] [Kismet](tools/kismet.md)
     - [x] [Pwnagotchi](tools/pwnagotchi.md) 
     - [ ] Pwncat
     - [ ] RouterSploit
