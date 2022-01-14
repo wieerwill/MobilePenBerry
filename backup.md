@@ -159,6 +159,83 @@ ls -l ./backup.sh
 Do not forget to test your created backups to make sure everything you need is being backed up and that the prune command is keeping and deleting the correct backups.
 
 
+# Backup Safety: RAID
+Having a backup is great but always keep in mind, that every disk can failure even your backup drive. In order to prevent loss of data, you can choose to use a RAID (Redundant Array of Inexpensive Disks). RAIDs are available as Software or Hardware RAID:
+- Software RAID: 
+  - no special hardware needed (low cost)
+  - needs more computation power (and energy) of your system
+  - often less disk space
+- Hardware RAID
+  - RAID Controller Cards required (costs from mid budget to high budget)
+  - takes up to no computation power of your system (as just using only a single drive that automatically backups itself in the background)
+  - many Controllers enable more disks, e.g. one mid-cost controller can use 8 disks at once; more high-end controllers can even support up to 32 disks at once
+
+Next to that there are different RAID options
+- **0**: data are split up into blocks that get written across all the drives in the array. By using multiple disks (at least 2) at the same time, this offers fast read and write speeds. All storage capacity can be fully used with no overhead. The downside to RAID 0 is that it is NOT redundant, the loss of any individual disk will cause complete data loss
+- **1**: a setup of at least two drives that contain the exact same data. If a drive fails, the others will still work. It is recommended for those who need high reliability. An additional benefit of RAID 1 is the high read performance, as data can be read off any of the drives in the array
+- **5**: equires the use of at least 3 drives, striping the data across multiple drives like RAID 0, but also has a “parity” distributed across the drives. In the event of a single drive failure, data is pieced together using the parity information stored on the other drives
+- **6**: is like RAID 5, but the parity data are written to two drives. That means it requires at least 4 drives and can withstand 2 drives dying simultaneously
+- **10**: consists of a minimum for four drives and combine the advantages of RAID 0 and RAID 1 in one single system. It provides security by mirroring all data on secondary drives while using striping across each set of drives to speed up data transfers
+- **50**: combines the straight block-level striping of RAID 0 with the distributed parity of RAID 5. This is a RAID 0 array striped across RAID 5 elements. It requires at least 6 drives
+- **60**: combines the straight block-level striping of RAID 0 with the distributed double parity of RAID 6. That is, a RAID 0 array striped across RAID 6 elements. It requires at least eight drives
+
+Creating a hardware RAID is just following the instructions of your Card manufactur.
+
+## Creating a software RAID 1
+Before you start, install the disks, boot up and list all your installed disks.
+```bash
+lsblk
+```
+This will present you all installed block devices with their corresponding name and size. Look for the devices you want to use for your RAID. Warning: the content of your RAID disks will be wiped in the next steps!!! Make sure to have no important data on that disk that isn't backuped elsewhere.
+
+Prepare and create disk mirror, in this example disk `/dev/sdb`, change that to your disk.
+```
+sudo fdsik /dev/sdb
+```
+Follow the command line with those steps:
+1. `g`: Create GPT disklabel
+2. `n`: Create a partition on the disk. Use default partition number, first/last sector or change it as you like
+3. `t`: select the first partition
+4. `29`: choose parition type `Linux RAID`
+5. `p`: print the new diskinfo and check label and size to be correct
+6. `w`: write all changes to disk
+
+Repeat those steps for each disk you want to use in your RAID. Check your new partitions with `lsblk`.
+
+One of the most popular option to perform software RAID is to use MDADM. Install it on your system:
+```bash
+sudo apt install mdadm
+```
+
+With MDADM you can create disk arrays very easy, here an example with two disks:
+```bash
+sudo mdadm --create /dev/md0 --level=mirror --raid-devices=2 /dev/sdb /dev/sdc
+```
+After that a new block device `dev/md0` got created. To make sure the array is reassembled automatically each time the system (re)boots, save the configuration to `/etc/mdadm/mdadm.conf`:
+```bash
+sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf
+```
+Depending from RAID level and disk size it can take a while for MDADM to sync the data of both disks. Check your RAID status and health:
+```bash
+sudo mdadm --detail /dev/md0
+```
+
+Now this new block device has no filesystem. Create one and mount it to your system:
+```bash
+sudo mkfs.ext4 /dev/md0
+sudo mkdir /mnt/raid
+sudo mount /dev/md0 /mnt/raid
+sudo chown -R <username>:<group> /mnt/raid  % set permissions to your user
+```
+Check your new RAID. If everything is working fine, you can add it to fstab to mount the device on boot:
+```bash
+echo '/dev/md0 /mnt/raid ext4 defaults,nofail 0 0' | sudo tee -a /etc/fstab
+```
+
 
 # Sources and more
 [BorgBackup](https://borgbackup.readthedocs.io)
+
+[dataplugs](https://www.dataplugs.com/en/raid-level-comparison-raid-0-raid-1-raid-5-raid-6-raid-10/)
+
+[jensd.be](https://jensd.be/913/linux/build-configure-a-linux-based-nas)
