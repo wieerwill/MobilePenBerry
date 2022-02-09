@@ -17,7 +17,7 @@ nmcli 802-11-wireless-security> quit
 The RTL8812BU is an often used chip built into USB-Wifi-Modules. It's very useful if you want to use more than the in-build wifi or scan multiple networks parallel.
 ```bash
 # get requirements
-sudo apt install git build-essential dkms raspberrypi-kernel-headers
+sudo apt install git bc build-essential dkms raspberrypi-kernel-headers
 
 # get scripts
 git clone https://github.com/cilynx/rtl88x2bu
